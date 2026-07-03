@@ -1,5 +1,7 @@
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Terminal } from "lucide-react";
+import { getSettings } from "./settings-store";
 
 const lines = [
   { p: "yuva@trichy", c: "~", t: "$ git clone https://github.com/foss-trichy/yuva-2026.git" },
@@ -10,6 +12,13 @@ const lines = [
 ];
 
 export function Foss() {
+  const [settings, setSettings] = useState(getSettings());
+  useEffect(() => {
+    const handleStorage = () => setSettings(getSettings());
+    window.addEventListener("yuva-settings-change", handleStorage);
+    return () => window.removeEventListener("yuva-settings-change", handleStorage);
+  }, []);
+
   return (
     <section id="foss" className="relative overflow-hidden py-28 md:py-32">
       <div
@@ -17,7 +26,7 @@ export function Foss() {
         className="pointer-events-none absolute inset-0 opacity-[0.07]"
         style={{
           backgroundImage:
-            "repeating-linear-gradient(0deg, rgba(34,211,238,0.5) 0 2px, transparent 2px 4px)",
+            "repeating-linear-gradient(0deg, rgba(255,87,34,0.5) 0 2px, transparent 2px 4px)",
           maskImage: "linear-gradient(180deg, transparent, black 30%, black 70%, transparent)",
         }}
       />
@@ -31,9 +40,9 @@ export function Foss() {
               Built in the open. <span className="text-gradient">Powered by community.</span>
             </h2>
             <p className="mt-5 text-muted-foreground md:text-lg">
-              A dedicated track celebrating the open-source movement: Linux, GitHub
-              sprints, contributor onboarding, maintainer AMAs, and the FOSS Mega Event
-              that closes YUVA 2026.
+              A dedicated track celebrating the open-source movement: Linux, GitHub sprints,
+              contributor onboarding, maintainer AMAs, and the FOSS Mega Event that closes YUVA
+              2026.
             </p>
             <ul className="mt-6 space-y-2 text-sm text-muted-foreground">
               {[
@@ -46,10 +55,33 @@ export function Foss() {
                 <li key={t}>{t}</li>
               ))}
             </ul>
+            <div className="mt-10">
+              {settings.fossRegistrationLink ? (
+                <a
+                  href={settings.fossRegistrationLink}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white px-6 py-3 rounded-xl font-bold text-base shadow-[0_0_20px_rgba(255,87,34,0.2)] hover:shadow-[0_0_30px_rgba(255,87,34,0.4)] transition-all hover:-translate-y-1"
+                >
+                  Register Now
+                </a>
+              ) : (
+                <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 text-muted-foreground px-6 py-3 rounded-xl font-bold text-base cursor-not-allowed">
+                  Registration Opening Soon
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="lg:col-span-7">
-            <div className="glass neon-border overflow-hidden rounded-2xl p-1">
+            <motion.div
+              initial={{ opacity: 0, y: 22, scale: 0.98 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
+              whileHover={{ y: -8, scale: 1.01 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, ease: "easeOut" }}
+              className="glass neon-border overflow-hidden rounded-2xl p-1"
+            >
               <div className="rounded-[14px] bg-black/40 p-5 font-mono text-xs md:p-7 md:text-sm">
                 <div className="mb-4 flex items-center gap-1.5">
                   <span className="text-[10px] uppercase tracking-widest text-muted-foreground flex items-center gap-1.5">
@@ -79,7 +111,7 @@ export function Foss() {
                   </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
       </div>

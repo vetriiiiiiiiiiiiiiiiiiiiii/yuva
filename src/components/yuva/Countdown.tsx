@@ -26,18 +26,26 @@ export function Countdown({ target }: { target: string }) {
   ];
 
   return (
-    <div className="mx-auto grid max-w-2xl grid-cols-4 gap-2 md:gap-4">
+    <div className="grid grid-cols-4 gap-3 w-full">
       {items.map(([label, value]) => (
         <div
           key={label}
-          className="surface rounded-lg px-2 py-4 text-center md:py-5"
+          className="flex flex-col items-center justify-center rounded-2xl border border-white/10 bg-black/30 backdrop-blur-md py-4 px-2"
+          style={{ boxShadow: "inset 0.5px 1px 3px 0px rgba(173,165,165,0.35)" }}
         >
-          <div className="font-display text-3xl md:text-5xl font-black text-gradient tabular-nums">
+          <span
+            className="font-display font-black tabular-nums leading-none"
+            style={{
+              fontSize: "clamp(2rem, 6vw, 3.5rem)",
+              color: "#FF6B35",
+              textShadow: "0 0 20px rgba(255,107,53,0.6)",
+            }}
+          >
             {String(value).padStart(2, "0")}
-          </div>
-          <div className="mt-1 text-[10px] uppercase tracking-[0.16em] text-muted-foreground md:text-xs">
+          </span>
+          <span className="mt-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400">
             {label}
-          </div>
+          </span>
         </div>
       ))}
     </div>

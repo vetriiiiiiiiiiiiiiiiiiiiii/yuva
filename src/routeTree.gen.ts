@@ -9,8 +9,74 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as WorkshopsRouteImport } from './routes/workshops'
+import { Route as TeamRouteImport } from './routes/team'
+import { Route as ScheduleRouteImport } from './routes/schedule'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as LaunchpadRouteImport } from './routes/launchpad'
+import { Route as FossRouteImport } from './routes/foss'
+import { Route as FlagshipsRouteImport } from './routes/flagships'
+import { Route as EventsRouteImport } from './routes/events'
+import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as AmbassadorRouteImport } from './routes/ambassador'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 
+const WorkshopsRoute = WorkshopsRouteImport.update({
+  id: '/workshops',
+  path: '/workshops',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TeamRoute = TeamRouteImport.update({
+  id: '/team',
+  path: '/team',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ScheduleRoute = ScheduleRouteImport.update({
+  id: '/schedule',
+  path: '/schedule',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LaunchpadRoute = LaunchpadRouteImport.update({
+  id: '/launchpad',
+  path: '/launchpad',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FossRoute = FossRouteImport.update({
+  id: '/foss',
+  path: '/foss',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FlagshipsRoute = FlagshipsRouteImport.update({
+  id: '/flagships',
+  path: '/flagships',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EventsRoute = EventsRouteImport.update({
+  id: '/events',
+  path: '/events',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AmbassadorRoute = AmbassadorRouteImport.update({
+  id: '/ambassador',
+  path: '/ambassador',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -19,28 +85,186 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/ambassador': typeof AmbassadorRoute
+  '/dashboard': typeof DashboardRoute
+  '/events': typeof EventsRoute
+  '/flagships': typeof FlagshipsRoute
+  '/foss': typeof FossRoute
+  '/launchpad': typeof LaunchpadRoute
+  '/login': typeof LoginRoute
+  '/schedule': typeof ScheduleRoute
+  '/team': typeof TeamRoute
+  '/workshops': typeof WorkshopsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/ambassador': typeof AmbassadorRoute
+  '/dashboard': typeof DashboardRoute
+  '/events': typeof EventsRoute
+  '/flagships': typeof FlagshipsRoute
+  '/foss': typeof FossRoute
+  '/launchpad': typeof LaunchpadRoute
+  '/login': typeof LoginRoute
+  '/schedule': typeof ScheduleRoute
+  '/team': typeof TeamRoute
+  '/workshops': typeof WorkshopsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/ambassador': typeof AmbassadorRoute
+  '/dashboard': typeof DashboardRoute
+  '/events': typeof EventsRoute
+  '/flagships': typeof FlagshipsRoute
+  '/foss': typeof FossRoute
+  '/launchpad': typeof LaunchpadRoute
+  '/login': typeof LoginRoute
+  '/schedule': typeof ScheduleRoute
+  '/team': typeof TeamRoute
+  '/workshops': typeof WorkshopsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/ambassador'
+    | '/dashboard'
+    | '/events'
+    | '/flagships'
+    | '/foss'
+    | '/launchpad'
+    | '/login'
+    | '/schedule'
+    | '/team'
+    | '/workshops'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/admin'
+    | '/ambassador'
+    | '/dashboard'
+    | '/events'
+    | '/flagships'
+    | '/foss'
+    | '/launchpad'
+    | '/login'
+    | '/schedule'
+    | '/team'
+    | '/workshops'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/ambassador'
+    | '/dashboard'
+    | '/events'
+    | '/flagships'
+    | '/foss'
+    | '/launchpad'
+    | '/login'
+    | '/schedule'
+    | '/team'
+    | '/workshops'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRoute
+  AmbassadorRoute: typeof AmbassadorRoute
+  DashboardRoute: typeof DashboardRoute
+  EventsRoute: typeof EventsRoute
+  FlagshipsRoute: typeof FlagshipsRoute
+  FossRoute: typeof FossRoute
+  LaunchpadRoute: typeof LaunchpadRoute
+  LoginRoute: typeof LoginRoute
+  ScheduleRoute: typeof ScheduleRoute
+  TeamRoute: typeof TeamRoute
+  WorkshopsRoute: typeof WorkshopsRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/workshops': {
+      id: '/workshops'
+      path: '/workshops'
+      fullPath: '/workshops'
+      preLoaderRoute: typeof WorkshopsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/team': {
+      id: '/team'
+      path: '/team'
+      fullPath: '/team'
+      preLoaderRoute: typeof TeamRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/schedule': {
+      id: '/schedule'
+      path: '/schedule'
+      fullPath: '/schedule'
+      preLoaderRoute: typeof ScheduleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/launchpad': {
+      id: '/launchpad'
+      path: '/launchpad'
+      fullPath: '/launchpad'
+      preLoaderRoute: typeof LaunchpadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/foss': {
+      id: '/foss'
+      path: '/foss'
+      fullPath: '/foss'
+      preLoaderRoute: typeof FossRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/flagships': {
+      id: '/flagships'
+      path: '/flagships'
+      fullPath: '/flagships'
+      preLoaderRoute: typeof FlagshipsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/events': {
+      id: '/events'
+      path: '/events'
+      fullPath: '/events'
+      preLoaderRoute: typeof EventsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ambassador': {
+      id: '/ambassador'
+      path: '/ambassador'
+      fullPath: '/ambassador'
+      preLoaderRoute: typeof AmbassadorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -53,6 +277,17 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRoute,
+  AmbassadorRoute: AmbassadorRoute,
+  DashboardRoute: DashboardRoute,
+  EventsRoute: EventsRoute,
+  FlagshipsRoute: FlagshipsRoute,
+  FossRoute: FossRoute,
+  LaunchpadRoute: LaunchpadRoute,
+  LoginRoute: LoginRoute,
+  ScheduleRoute: ScheduleRoute,
+  TeamRoute: TeamRoute,
+  WorkshopsRoute: WorkshopsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

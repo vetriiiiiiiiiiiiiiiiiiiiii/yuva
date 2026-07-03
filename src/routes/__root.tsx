@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
@@ -6,7 +7,11 @@ import {
   useRouter,
   HeadContent,
   Scripts,
+  useRouterState,
 } from "@tanstack/react-router";
+
+import { Navbar } from "@/components/yuva/Navbar";
+import { Footer, Loader, NeonCursor } from "@/components/yuva/Extras";
 
 import appCss from "../styles.css?url";
 
@@ -72,18 +77,35 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Yuva Nexus is a futuristic, dark-themed website for the YUVA 2026 National Techno-Management Fest." },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Yuva Nexus is a futuristic, dark-themed website for the YUVA 2026 National Techno-Management Fest." },
+      { title: "YUVA 2026" },
+      {
+        name: "description",
+        content:
+          "YUVA 2026 is the national techno-management fest of SRM IST Trichy, featuring events, workshops, Launchpad and FOSS Trichy.",
+      },
+      { name: "author", content: "YUVA 2026" },
+      { property: "og:title", content: "YUVA 2026" },
+      {
+        property: "og:description",
+        content: "National techno-management fest by SRM IST Trichy. Sep 7-10, 2026.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
-      { name: "twitter:title", content: "Lovable App" },
-      { name: "twitter:description", content: "Yuva Nexus is a futuristic, dark-themed website for the YUVA 2026 National Techno-Management Fest." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/9f86b85e-e8a6-4da0-bb02-45094ad950e8/id-preview-05dfe0af--cf6d59f9-5fde-4386-9b5d-f0a97cd4d24d.lovable.app-1779870690045.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/9f86b85e-e8a6-4da0-bb02-45094ad950e8/id-preview-05dfe0af--cf6d59f9-5fde-4386-9b5d-f0a97cd4d24d.lovable.app-1779870690045.png" },
+      { name: "twitter:title", content: "YUVA 2026" },
+      {
+        name: "twitter:description",
+        content: "National techno-management fest by SRM IST Trichy. Sep 7-10, 2026.",
+      },
+      {
+        property: "og:image",
+        content:
+          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/9f86b85e-e8a6-4da0-bb02-45094ad950e8/id-preview-05dfe0af--cf6d59f9-5fde-4386-9b5d-f0a97cd4d24d.lovable.app-1779870690045.png",
+      },
+      {
+        name: "twitter:image",
+        content:
+          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/9f86b85e-e8a6-4da0-bb02-45094ad950e8/id-preview-05dfe0af--cf6d59f9-5fde-4386-9b5d-f0a97cd4d24d.lovable.app-1779870690045.png",
+      },
     ],
     links: [
       {
@@ -112,13 +134,59 @@ function RootShell({ children }: { children: React.ReactNode }) {
   );
 }
 
+function HashScrollHandler() {
+  const routerState = useRouterState();
+  const hash = routerState.location.hash;
+  const pathname = routerState.location.pathname;
+
+  useEffect(() => {
+    if (!hash) {
+      window.scrollTo(0, 0);
+      return;
+    }
+
+    const cleanId = hash.replace(/^#/, "");
+    // Wait a brief moment to ensure elements are mounted
+    const t = setTimeout(() => {
+      const element = document.getElementById(cleanId);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }, 150);
+
+    return () => clearTimeout(t);
+  }, [hash, pathname]);
+
+  return null;
+}
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
+      <HashScrollHandler />
+      <div className="page-3d-scene relative min-h-screen flex flex-col overflow-x-hidden">
+        <SiteAmbientBackground />
+        <div className="relative z-10 flex min-h-screen flex-col">
+          <Loader />
+          <Navbar />
+          <main className="flex-grow">
+            {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+            <Outlet />
+          </main>
+          <Footer />
+        </div>
+      </div>
     </QueryClientProvider>
+  );
+}
+
+function SiteAmbientBackground() {
+  return (
+    <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden bg-background">
+      <div className="site-cinematic-bg" />
+      <div className="site-cinematic-grid" />
+    </div>
   );
 }

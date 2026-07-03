@@ -17,8 +17,14 @@ export function Section({
   className?: string;
 }) {
   return (
-    <section id={id} className={`relative py-20 md:py-28 ${className}`}>
-      <div className="mx-auto max-w-7xl px-4">
+    <section id={id} className={`section-3d-container relative py-20 md:py-28 ${className}`}>
+      <motion.div
+        initial={{ opacity: 0, y: 28, scale: 0.98 }}
+        whileInView={{ opacity: 1, y: 0, scale: 1 }}
+        viewport={{ once: true, margin: "-90px" }}
+        transition={{ duration: 0.55, ease: "easeOut" }}
+        className="section-3d-card mx-auto max-w-7xl px-4"
+      >
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -38,8 +44,8 @@ export function Section({
             <p className="mt-4 text-muted-foreground text-base md:text-lg max-w-2xl">{subtitle}</p>
           )}
         </motion.div>
-        <div className="mt-10 md:mt-14">{children}</div>
-      </div>
+        <div className="mt-10 md:mt-14 section-3d-panel">{children}</div>
+      </motion.div>
     </section>
   );
 }

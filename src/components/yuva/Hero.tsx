@@ -1,160 +1,177 @@
-import { motion } from "framer-motion";
-import { useState } from "react";
-import type { MouseEvent } from "react";
-import {
-  ArrowRight,
-  CalendarDays,
-  Code2,
-  MapPin,
-  Mic2,
-  Rocket,
-  Sparkles,
-  Trophy,
-  Users,
-  Zap,
-} from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
+import { Link } from "@tanstack/react-router";
+import { ArrowRight, CalendarDays, LogIn, MapPin } from "lucide-react";
 import { Countdown } from "./Countdown";
-import { Particles } from "./Particles";
-
-const highlights = [
-  { icon: CalendarDays, label: "Sep 7-10, 2026", value: "4 days" },
-  { icon: Users, label: "50+ colleges", value: "National crowd" },
-  { icon: Sparkles, label: "30+ mentors", value: "Founder access" },
-];
-
-const featuredTracks = [
-  { icon: Code2, title: "HackForge 48", meta: "48-hour national hackathon" },
-  { icon: Rocket, title: "Launchpad Phase 2", meta: "Startup expo and investor pitches" },
-  { icon: Trophy, title: "Championship Nights", meta: "Robotics, esports and awards" },
-  { icon: Mic2, title: "Founder Sessions", meta: "Talks, mixers and mentor rooms" },
-];
+import { useAuth } from "./auth-store";
+import { getSettings } from "./settings-store";
 
 export function Hero() {
-  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+  const { user } = useAuth();
+  const sectionRef = useRef<HTMLElement | null>(null);
+  const prefersReducedMotion = useReducedMotion();
+  const [videoUrl, setVideoUrl] = useState<string>("");
 
-  function handleMouseMove(event: MouseEvent<HTMLDivElement>) {
-    const bounds = event.currentTarget.getBoundingClientRect();
-    const x = (event.clientX - bounds.left) / bounds.width - 0.5;
-    const y = (event.clientY - bounds.top) / bounds.height - 0.5;
-    setTilt({ x: x * 22, y: y * 18 });
-  }
+  useEffect(() => {
+    const load = () => {
+      setVideoUrl(getSettings().heroVideoUrl || "");
+    };
+    load();
+    window.addEventListener("yuva-settings-change", load);
+    return () => window.removeEventListener("yuva-settings-change", load);
+  }, []);
 
-  function handleMouseLeave() {
-    setTilt({ x: 0, y: 0 });
-  }
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end start"],
+  });
+
+  /* Parallax — disabled when user prefers reduced motion */
+  const titleY = useTransform(scrollYProgress, [0, 1], prefersReducedMotion ? [0, 0] : [0, -80]);
+  const titleOpacity = useTransform(scrollYProgress, [0, 0.55], [1, 0]);
 
   return (
-    <section id="top" className="relative min-h-[100svh] overflow-hidden pt-28 pb-14">
-      <div className="absolute inset-0 grid-bg opacity-50" />
-      <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/60 to-transparent" />
-      <Particles />
-
-      <div className="relative mx-auto flex min-h-[calc(100svh-10rem)] w-full max-w-7xl flex-col justify-center px-4">
+    <section
+      ref={sectionRef}
+      id="top"
+      className="relative w-full h-screen overflow-hidden flex flex-col justify-center items-center"
+      style={{ willChange: "transform" }}
+    >
+      {/* ── Background: Dynamic Video or Fallback Gradient ── */}
+      {videoUrl ? (
+        <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+          {videoUrl.includes("youtube.com") || videoUrl.includes("youtu.be") ? (
+            <iframe
+              className="absolute w-[150vw] h-[150vh] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+              src={`https://www.youtube.com/embed/${videoUrl.includes("v=") ? videoUrl.split("v=")[1].split("&")[0] : videoUrl.split("/").pop()}?autoplay=1&mute=1&controls=0&loop=1&playlist=${videoUrl.includes("v=") ? videoUrl.split("v=")[1].split("&")[0] : videoUrl.split("/").pop()}&modestbranding=1&showinfo=0`}
+              allow="autoplay; encrypted-media"
+              frameBorder="0"
+            />
+          ) : (
+            <video
+              src={videoUrl}
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="absolute w-full h-full object-cover"
+            />
+          )}
+        </div>
+      ) : (
         <div
-          className="hero-3d-scene"
-          onMouseMove={handleMouseMove}
-          onMouseLeave={handleMouseLeave}
+          aria-hidden
+          className="absolute inset-0 z-0"
+          style={{
+            background:
+              "radial-gradient(ellipse 80% 60% at 20% 30%, rgba(255,112,67,0.28) 0%, transparent 55%), " +
+              "radial-gradient(ellipse 70% 50% at 80% 15%, rgba(20,184,166,0.12) 0%, transparent 50%), " +
+              "radial-gradient(ellipse 60% 60% at 50% 85%, rgba(255,214,102,0.14) 0%, transparent 50%), " +
+              "linear-gradient(160deg, #07090f 0%, #130906 55%, #080a10 100%)",
+          }}
+        />
+      )}
+
+      {/* ── Dark overlay ── */}
+      <div aria-hidden className="absolute inset-0 bg-black/50 z-[1]" />
+
+      {/* ── Subtle dot-grid texture (CSS only, no extra element cost) ── */}
+      <div
+        aria-hidden
+        className="absolute inset-0 z-[2] pointer-events-none opacity-20"
+        style={{
+          backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.18) 1px, transparent 1px)",
+          backgroundSize: "48px 48px",
+          maskImage: "radial-gradient(ellipse 70% 60% at 50% 50%, black 20%, transparent 80%)",
+        }}
+      />
+
+      {/* ── Centered hero content ── */}
+      <motion.div
+        className="relative z-10 text-center flex flex-col items-center px-4 w-full max-w-5xl will-change-transform"
+        style={{ y: titleY, opacity: titleOpacity }}
+        initial={{ opacity: 0, y: 24 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
+      >
+        {/* Giant YUVA title */}
+        <h1
+          className="font-display font-black text-white leading-[0.82] select-none"
+          style={{
+            fontSize: "clamp(5.5rem, 20vw, 16rem)",
+            textShadow:
+              "0 0 40px rgba(255,255,255,0.8), 0 0 80px rgba(255,255,255,0.4), 0 24px 90px rgba(0,0,0,0.8)",
+          }}
         >
-          <motion.div
-            initial={{ opacity: 0, y: 18, rotateX: 0, rotateY: 0 }}
-            animate={{ opacity: 1, y: 0, rotateX: -tilt.y, rotateY: tilt.x }}
-            transition={{ duration: 0.7, type: "spring", stiffness: 90, damping: 18 }}
-            style={{ transformStyle: "preserve-3d" }}
-            className="hero-3d-card relative overflow-hidden grid gap-8 lg:grid-cols-[1.08fr_0.92fr] lg:items-center"
-          >
-          <div>
-            <h1 className="mt-7 max-w-5xl font-display text-[clamp(3.5rem,10vw,8.8rem)] font-black leading-[0.88] tracking-normal">
-              <span className="text-gradient">YUVA</span>
-              <span className="block text-foreground">2026</span>
-            </h1>
+          YUVA
+        </h1>
 
-            <p className="mt-6 max-w-2xl text-base leading-7 text-muted-foreground md:text-xl">
-              A four-day campus operating system for builders: competitions, AI labs,
-              startup pitches, open-source sprints, esports and culture in one live arena.
-            </p>
+        {/* Year */}
+        <span
+          className="block font-semibold tracking-[0.28em] text-orange-100 mt-3"
+          style={{ fontSize: "clamp(1.5rem, 4.5vw, 4rem)" }}
+        >
+          2026
+        </span>
 
-            <div className="mt-8" />
-
-            <div className="mt-8 grid max-w-3xl gap-2 sm:grid-cols-3">
-              {highlights.map((item) => (
-                <div key={item.label} className="surface rounded-lg p-4">
-                  <div className="flex items-center gap-2 text-xs font-semibold uppercase text-muted-foreground">
-                    <item.icon size={14} className="text-[color:var(--neon-blue)]" />
-                    {item.label}
-                  </div>
-                  <div className="mt-2 font-display text-lg font-bold">{item.value}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="relative lg:pl-8 hero-3d-panel rounded-[2rem] p-6">
-            <div className="absolute -left-8 top-8 hidden h-48 w-px animated-gradient lg:block" />
-            <div className="mb-5 flex items-center gap-4 rounded-lg border border-white/10 bg-black/35 p-4 backdrop-blur-md">
-              <img
-                src="/logos/yuva-symbol-color.jpg"
-                alt="YUVA symbol"
-                className="h-16 w-16 rounded-md object-cover"
-              />
-              <div>
-                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-muted-foreground">
-                  <Zap size={14} className="text-[color:var(--signal-green)]" />
-                  Featured Tracks
-                </div>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  The official YUVA mark anchors every competition, workshop and startup track.
-                </p>
-              </div>
-            </div>
-            <div className="space-y-3">
-              {featuredTracks.map((track, index) => (
-                <motion.a
-                  key={track.title}
-                  href={track.title.includes("Launchpad") ? "#launchpad" : "#events"}
-                  initial={{ opacity: 0, x: 24 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.16 + index * 0.08, duration: 0.55 }}
-                  className="group flex items-center gap-4 rounded-lg border border-white/10 bg-white/[0.055] p-4 backdrop-blur-md transition-all hover:border-[color:var(--neon-blue)] hover:bg-white/[0.085]"
-                >
-                  <div className="grid h-12 w-12 shrink-0 place-items-center rounded-lg animated-gradient text-primary-foreground">
-                    <track.icon size={20} />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <h3 className="font-display text-lg font-bold">{track.title}</h3>
-                    <p className="mt-1 text-sm text-muted-foreground">{track.meta}</p>
-                  </div>
-                  <ArrowRight size={16} className="shrink-0 text-muted-foreground transition-transform group-hover:translate-x-1 group-hover:text-[color:var(--neon-blue)]" />
-                </motion.a>
-              ))}
-            </div>
-            <div className="mt-4 rounded-lg border border-white/10 bg-black/35 p-4 backdrop-blur-md">
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <div className="flex items-center gap-2 text-sm font-semibold">
-                  <MapPin size={16} className="text-[color:var(--hot-amber)]" />
-                  Trichy, Tamil Nadu
-                </div>
-                <a
-                  href="#timeline"
-                  className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-[color:var(--signal-green)]"
-                >
-                  View 4-day schedule <ArrowRight size={14} />
-                </a>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-      </div>
-
+        {/* ── Countdown — moved inline, directly below "2026" ── */}
         <motion.div
+          className="w-full max-w-md mt-8 mb-8"
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.35 }}
-          className="mt-12"
+          transition={{ delay: 0.35, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
         >
           <Countdown target="2026-09-07T09:00:00" />
         </motion.div>
-      </div>
+
+        {/* Date + location pills */}
+        <div className="flex flex-wrap justify-center gap-3 text-sm text-slate-200 mb-8">
+          <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/30 px-4 py-2 backdrop-blur-md">
+            <CalendarDays size={14} className="text-orange-300 shrink-0" />
+            Sep 7–10, 2026
+          </div>
+          <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/30 px-4 py-2 backdrop-blur-md">
+            <MapPin size={14} className="text-orange-300 shrink-0" />
+            SRM IST Trichy
+          </div>
+        </div>
+
+        {/* CTA buttons */}
+        <div className="flex flex-wrap justify-center gap-4">
+          {!user && (
+            <Link
+              to="/login"
+              className="hero-primary-btn inline-flex items-center justify-center gap-2 rounded-full px-7 py-3.5 text-sm font-bold text-slate-950"
+            >
+              <LogIn size={15} />
+              Register Now
+              <ArrowRight size={15} />
+            </Link>
+          )}
+          {user?.role === "admin" && (
+            <Link
+              to="/admin"
+              className="hero-primary-btn inline-flex items-center justify-center gap-2 rounded-full px-7 py-3.5 text-sm font-bold text-slate-950"
+            >
+              Control Center <ArrowRight size={15} />
+            </Link>
+          )}
+          {user?.role === "participant" && (
+            <Link
+              to="/dashboard"
+              className="hero-primary-btn inline-flex items-center justify-center gap-2 rounded-full px-7 py-3.5 text-sm font-bold text-slate-950"
+            >
+              My Dashboard <ArrowRight size={15} />
+            </Link>
+          )}
+          <Link
+            to="/events"
+            className="inline-flex items-center justify-center gap-2 rounded-full border border-white/20 bg-white/10 px-7 py-3.5 text-sm font-semibold text-white backdrop-blur-md transition-colors hover:bg-white/18"
+          >
+            Explore Events <ArrowRight size={15} />
+          </Link>
+        </div>
+      </motion.div>
     </section>
   );
 }
-
